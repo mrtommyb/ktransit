@@ -17,5 +17,5 @@ plt.plot(M.time,tmod)
 ##OR
 ```
 time,earthlc = ktransit.give_me_earth()
-plt.plot(time,earthlc
+plt.plot(time,earthlc)
 ```
