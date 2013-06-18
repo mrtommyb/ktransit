@@ -1,0 +1,158 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module _tmodtom ! in 
+    interface  ! in :_tmodtom
+        subroutine transitmodel(nfit,nplanet,nplanetmax,sol,nmax,npt,time,itime,ntt,tobs,omc,tmodel,dtype) ! in :_tmodtom:tmodtom.f
+            integer, optional,intent(in),check(len(sol)>=nfit),depend(sol) :: nfit=len(sol)
+            integer intent(in) :: nplanet
+            integer, optional,intent(in),check(len(ntt)>=nplanetmax),depend(ntt) :: nplanetmax=len(ntt)
+            double precision dimension(nfit),intent(in) :: sol
+            integer, optional,intent(in),check(shape(tobs,1)==nmax),depend(tobs) :: nmax=shape(tobs,1)
+            integer, optional,intent(in),check(len(time)>=npt),depend(time) :: npt=len(time)
+            double precision dimension(npt),intent(in) :: time
+            double precision dimension(npt),intent(in),depend(npt) :: itime
+            integer dimension(nplanetmax),intent(in) :: ntt
+            double precision dimension(nplanetmax,nmax),intent(in),depend(nplanetmax) :: tobs
+            double precision dimension(nplanetmax,nmax),intent(in),depend(nplanetmax,nmax) :: omc
+            double precision dimension(npt),intent(out),depend(npt) :: tmodel
+            integer dimension(npt),intent(in),depend(npt) :: dtype
+        end subroutine transitmodel
+        function albedomod(pi,ag,phi) ! in :_tmodtom:tmodtom.f
+            double precision :: pi
+            double precision :: ag
+            double precision :: phi
+            double precision :: albedomod
+        end function albedomod
+        function distance(asep,eccn,tanom) ! in :_tmodtom:tmodtom.f
+            double precision :: asep
+            double precision :: eccn
+            double precision :: tanom
+            double precision :: distance
+        end function distance
+        function trueanomaly(eccn,eanom) ! in :_tmodtom:tmodtom.f
+            double precision :: eccn
+            double precision :: eanom
+            double precision :: trueanomaly
+        end function trueanomaly
+        subroutine kepler(manom,eanom,eccn) ! in :_tmodtom:tmodtom.f
+            double precision :: manom
+            double precision :: eanom
+            double precision :: eccn
+        end subroutine kepler
+        subroutine invkepler(eanom,manom,eccn) ! in :_tmodtom:tmodtom.f
+            double precision :: eanom
+            double precision :: manom
+            double precision :: eccn
+        end subroutine invkepler
+        subroutine readttfile(nunit,nplanetmax,nmax,nplanet,ntt,tobs,omc) ! in :_tmodtom:tmodtom.f
+            integer :: nunit
+            integer, optional,check(shape(tobs,0)==nplanetmax),depend(tobs) :: nplanetmax=shape(tobs,0)
+            integer, optional,check(shape(tobs,1)==nmax),depend(tobs) :: nmax=shape(tobs,1)
+            integer, optional,check(len(ntt)>=nplanet),depend(ntt) :: nplanet=len(ntt)
+            integer dimension(nplanet) :: ntt
+            double precision dimension(nplanetmax,nmax) :: tobs
+            double precision dimension(nplanetmax,nmax),depend(nplanetmax,nmax) :: omc
+        end subroutine readttfile
+        subroutine lininterp(x,y,npmax,nmax,np,npt,xin,yout) ! in :_tmodtom:tmodtom.f
+            double precision dimension(npmax,nmax) :: x
+            double precision dimension(npmax,nmax),depend(npmax,nmax) :: y
+            integer, optional,check(shape(x,0)==npmax),depend(x) :: npmax=shape(x,0)
+            integer, optional,check(shape(x,1)==nmax),depend(x) :: nmax=shape(x,1)
+            integer :: np
+            integer dimension(npmax),depend(npmax) :: npt
+            double precision :: xin
+            double precision :: yout
+        end subroutine lininterp
+        subroutine occultquad(z0,u1,u2,p,muo1,mu0,nz) ! in :_tmodtom:tmodtom.f
+            double precision dimension(nz) :: z0
+            double precision :: u1
+            double precision :: u2
+            double precision :: p
+            double precision dimension(nz),depend(nz) :: muo1
+            double precision dimension(nz),depend(nz) :: mu0
+            integer, optional,check(len(z0)>=nz),depend(z0) :: nz=len(z0)
+        end subroutine occultquad
+        function rc(x,y) ! in :_tmodtom:tmodtom.f
+            real*8 :: x
+            real*8 :: y
+            real*8 :: rc
+        end function rc
+        function rj(x,y,z,p) ! in :_tmodtom:tmodtom.f
+            real*8 :: x
+            real*8 :: y
+            real*8 :: z
+            real*8 :: p
+            real*8 :: rj
+        end function rj
+        function ellec(k) ! in :_tmodtom:tmodtom.f
+            double precision :: k
+            double precision :: ellec
+        end function ellec
+        function ellk(k) ! in :_tmodtom:tmodtom.f
+            double precision :: k
+            double precision :: ellk
+        end function ellk
+        function rf(x,y,z) ! in :_tmodtom:tmodtom.f
+            real*8 :: x
+            real*8 :: y
+            real*8 :: z
+            real*8 :: rf
+        end function rf
+        function mandelagol(nintg,r1,r2,x1,x2,y1,y2,c,b0,mu,mulimb0,mulimbf,dist) ! in :_tmodtom:tmodtom.f
+            integer, optional,check(len(x2)>=nintg),depend(x2) :: nintg=len(x2)
+            double precision :: r1
+            double precision :: r2
+            double precision :: x1
+            double precision dimension(nintg) :: x2
+            double precision :: y1
+            double precision dimension(nintg),depend(nintg) :: y2
+            double precision dimension(4) :: c
+            double precision dimension(nintg),depend(nintg) :: b0
+            double precision dimension(nintg),depend(nintg) :: mu
+            double precision dimension(nintg),depend(nintg) :: mulimb0
+            double precision dimension(nintg,5),depend(nintg) :: mulimbf
+            double precision dimension(nintg),depend(nintg) :: dist
+            double precision :: mandelagol
+        end function mandelagol
+        subroutine occultsmall(p,c1,c2,c3,c4,nz,z,mu) ! in :_tmodtom:tmodtom.f
+            real*8 :: p
+            real*8 :: c1
+            real*8 :: c2
+            real*8 :: c3
+            real*8 :: c4
+            integer, optional,check(len(z)>=nz),depend(z) :: nz=len(z)
+            real*8 dimension(nz) :: z
+            real*8 dimension(nz),depend(nz) :: mu
+        end subroutine occultsmall
+        function iofr(c1,c2,c3,c4,r,p) ! in :_tmodtom:tmodtom.f
+            real*8 :: c1
+            real*8 :: c2
+            real*8 :: c3
+            real*8 :: c4
+            real*8 :: r
+            real*8 :: p
+            real*8 :: iofr
+        end function iofr
+        subroutine occultnl(rl,c1,c2,c3,c4,b0,mulimb0,mulimbf,nb) ! in :_tmodtom:tmodtom.f
+            real*8 :: rl
+            real*8 :: c1
+            real*8 :: c2
+            real*8 :: c3
+            real*8 :: c4
+            real*8 dimension(nb) :: b0
+            real*8 dimension(nb),depend(nb) :: mulimb0
+            real*8 dimension(nb,5),depend(nb) :: mulimbf
+            integer, optional,check(len(b0)>=nb),depend(b0) :: nb=len(b0)
+        end subroutine occultnl
+        subroutine occultuniform(b0,w,muo1,nb) ! in :_tmodtom:tmodtom.f
+            real*8 dimension(nb) :: b0
+            real*8 :: w
+            real*8 dimension(nb),depend(nb) :: muo1
+            integer, optional,check(len(b0)>=nb),depend(b0) :: nb=len(b0)
+        end subroutine occultuniform
+    end interface 
+end python module _tmodtom
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
