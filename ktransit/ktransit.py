@@ -1,5 +1,5 @@
 import numpy as np
-from _tmodtom import transitmodel
+#from _tmodtom import transitmodel
 
 class LCModel(object):
 
