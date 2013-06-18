@@ -1,0 +1,8 @@
+*.pyc
+*.so
+build
+dist
+*.egg-info
+.DS_Store
+_*f2pywrappers.f
+_*module.c
