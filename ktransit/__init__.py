@@ -6,3 +6,4 @@ from __future__ import (division, print_function, absolute_import,
 
 from .ktransit import LCModel
 from .ktransit import give_me_earth
+from .fittransit import FitTransit

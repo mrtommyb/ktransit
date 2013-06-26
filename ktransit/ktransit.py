@@ -19,6 +19,19 @@ class LCModel(object):
     def add_star(self, rho=1.5, ld1=0.2, 
         ld2=0.4, ld3=0.0, ld4=0.0, dil=0.0,
         veloffset=0.0, zpt=0.0):
+        """
+        add details of the star about which the planet(s) orbit
+        ldX are the limb darkening parameters
+        if only ld1 and and ld2 are non-zero a quadrativ limb darkening
+        model is used
+        if ld3 and ld4 are also non-zoro then a 4-parameter limb
+        darkening law is used
+
+        rho = mean stellar density in g/cc**3
+        dil is the proportion of the total light not coming from the 
+            target star 0.5 means thatyou ahve two stars of equal 
+            brightness
+        """
         self.rho = rho
         self.ldp = [ld1,ld2,ld3,ld4]
         self.dil = dil
@@ -26,12 +39,12 @@ class LCModel(object):
         self.zpt = zpt
 
 
-    def add_planet(self,replace=0, 
+    def add_planet(self,replace=None, 
         T0=1.0, period=1.0, impact=0.1,
         rprs=0.1, ecosw=0.0, esinw=0.0,
         rvamp=0.0, occ=0.0, ell=0.0, 
         alb=0.0):
-        if replace == 0:
+        if replace == None:
             self.nplanets = self.nplanets + 1
             pnum = self.nplanets - 1
             self.add_dimention_to_planet_params()
@@ -72,6 +85,7 @@ class LCModel(object):
         else:
             self.time = time
         npt = len(self.time)
+        nmax = 1500000
 
         if itime is None:
             default_cadence = 1625.3 / 86400.
@@ -85,12 +99,12 @@ class LCModel(object):
             self.ntt = ntt
 
         if tobs is None:
-            self.tobs = np.empty([self.nplanets,npt])
+            self.tobs = np.empty([self.nplanets,nmax])
         else:
             self.tobs = tobs
 
         if omc is None:
-            self.omc = np.empty([self.nplanets,npt])
+            self.omc = np.empty([self.nplanets,nmax])
         else:
             self.omc = omc
 
@@ -123,7 +137,6 @@ class LCModel(object):
             self.ecosw,self.esinw,
             self.rvamp,self.occ,
             self.ell,self.alb]).T.flatten()
-
 
         self._transitmodel = transitmodel(self.nplanets,
             sol,self.time,self.itime,self.ntt,
