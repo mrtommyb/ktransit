@@ -1,5 +1,8 @@
 ktransit
 ========
+This package contains routines creating and optionally fitting a transiting planet model.
+The model is based on the work of Mandel and Agol (2002) and is designed to be very simple
+to use.
 
 ```
 import ktransit
