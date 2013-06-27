@@ -2,12 +2,24 @@ ktransit
 ========
 **A simple exoplanet transit modeling tool**
 
-This package contains routines creating and optionally fitting a transiting planet model.
+This package contains routines to create and/or fit a transiting planet model.
 The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model.
 
+Installation
+-------
+Install via pip
+```
+pip install -e git+https://github.com/mrtommyb/kransit#egg=ktransit-dev
+```
+or via the git repository
+```
+git clone https://github.com/mrtommyb/kransit.git
+cd ktransit
+python setup.py install
+```
 
 
-The basic module, *ktransit* will create a transit model. The code uses sensible defaults and only changes parameters explicitly stated. For example, to create a simple model just run
+The basic module, *ktransit*, will create a transit model. The code uses sensible defaults and only changes parameters explicitly stated. For example, to create a simple model just run
 
 ```python
 import ktransit
@@ -69,6 +81,7 @@ You need to give the model an initial guess and tell it what parameters you want
 
 The code assumes that the observed data has been normalised and detrended. The default zeropoint is 0.0 so the out of transit data should have a mean of 0.0 unless you want to change the zpt parameter.
 
+A simple fitting example, there is no transit in the fake data I create here.
 ```python
 from ktransit import FitTransit
 
@@ -109,6 +122,6 @@ period: 1.2000614885
 T0: 0.700001081846
 rprs: 0.0198908445261
 ```
-Note that this output does not come from the code above but from data with planet in, two planets in fact.
+The above comes fitting a model with two planets in
 
 
