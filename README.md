@@ -130,7 +130,8 @@ You can make a pretty plot of the output of the fitting by running
 fig = ktransit.plot_results(time,flux,fitT.transitmodel)
 fig.savefig('my_beautiful_fit.png') # or fig.show()
 ```
-
+The plot below shows a three planet model fit to the Kepler-37 data. This plot can be created using the code in examples/
+![transitplot](https://raw.github.com/mrtommyb/ktransit/master/examples/ktransitfit.png)
 
 
 
