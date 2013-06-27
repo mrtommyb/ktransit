@@ -1,3 +1,4 @@
+from __future__ import print_function
 import ktransit 
 from scipy import optimize
 import numpy as np 
@@ -188,28 +189,21 @@ class FitTransit():
             self.fitresultplanets['pnum' + str(i)] = dict(
                 zip(self.fitparplanet,planetout))
 
-    class Parameter:
-        def __init__(self, value):
-                self.value = value
+    def print_results(self):
+        print("Best-fitting stellar parameters")
+        for k,v in self.fitresultstellar.iteritems():
+            print(u'{0}: {1}'.format(k, v))
+        print()
+        for i in xrange(self.nplanets):
+            print("Best-fitting planet parameters for planet {0}".format(i))
+            pnum = 'pnum' + str(i)
+            for k,v in self.fitresultplanets[pnum].iteritems():
+                print(u'{0}: {1}'.format(k, v))
+            print()
 
-        def set(self, value):
-                self.value = value
 
-        def __call__(self):
-                return self.value
 
-    def fit(function, parameters, time, flux):
-        def f(params):
-            i = 0
-            for p in parameters:
-                p.set(params[i])
-                i += 1
-            return y - function(x)
-
-        p = [param() for param in parameters]
-        optimize.leastsq(f, p)
-
-def make_plot(time,obsf,model):
+def plot_results(time,obsf,model):
     #import matplotlib
     #matplotlib.use("pdf")
     import matplotlib.pyplot as plt
@@ -262,7 +256,7 @@ if __name__ == '__main__':
     fitT.add_guess_star(rho=7.0)
     fitT.add_guess_planet(period=1.001,impact=0.4,T0=1.501,rprs=0.08)
     fitT.add_guess_planet(period=1.201,impact=0.7,T0=0.701,rprs=0.01)
-    fitT.add_data(time=M.time,flux=tmod_noisy)
+    fitT.add_data(time=M.time,flux=tmod_noisy, ferr=0.00001)
     fitT.free_parameters(freeparstar,freeparplanet)
     fitT.do_fit()
 
@@ -273,6 +267,6 @@ if __name__ == '__main__':
         use_d = fitT.fitresultplanets['pnum' + str(i)]
         M.update_planet(pnum=i,**use_d)
 
-    fig = make_plot(M.time,tmod_noisy+1.0,fitT.transitmodel+1.0)
+    fig = plot_results(M.time,tmod_noisy+1.0,fitT.transitmodel+1.0)
     fig.savefig('fitresult.pdf')
 
