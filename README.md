@@ -62,5 +62,47 @@ tmod = M.transitmodel
 plt.plot(M.time,tmod)
 ```
 
+Fitting
+-------
+This is the fun part!! Fit a transit model to data. I use the scipy Levenberg–Marquardt least-squares minimization
+You need to give the model an initial guess and tell it what parameters you want to allow to vary, everything else is kept fixed.
+
+```python
+from ktransit import FitTransit
+
+time = np.arange(0,10,0.0188)   # you need a time and a flux
+flux = np.zeros_like(time)      # there are no transits here :(
+
+fitT = FitTransit()
+fitT.add_guess_star(rho=7.0)    
+fitT.add_guess_planet(
+        period=365.25, impact=0.0, 
+        T0=0.0, rprs=0.009155)
+fitT.add_data(time=time, flux=flux)
+
+vary_star = ['rho', 'zpt']      # free stellar parameters
+vary_planet = (['period',       # free planetary parameters
+        'T0', 'impact', 
+        'rprs'])                # free planet parameters are the same for every planet you model
+
+fitT.free_parameters(vary_star, vary_planet)
+fitT.do_fit()                   # run the fitting
+
+fitT.print_results()            print some results
+
+Best-fitting stellar parameters # these are not the fit parameters for a lightcurve with two planets
+rho: 5.02680657221
+
+Best-fitting planet parameters for planet 0
+impact: 0.0803742216248
+period: 1.00000143821
+T0: 1.49999092263
+rprs: 0.0999846857972
+
+Best-fitting planet parameters for planet 1
+impact: 0.387103707996
+period: 1.2000614885
+T0: 0.700001081846
+rprs: 0.0198908445261
 
 
