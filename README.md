@@ -123,6 +123,14 @@ period: 1.2000614885
 T0: 0.700001081846
 rprs: 0.0198908445261
 ```
-The above comes from fitting a model with two planets in
+The above comes from fitting a model with two planets in.
+
+You can make a pretty plot of the output of the fitting by running
+``` python
+fig = ktransit.plot_results(time,flux,fitT.transitmodel)
+fig.savefig('my_beautiful_fit.png') # or fig.show()
+```
+
+
 
 
