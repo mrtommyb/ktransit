@@ -88,9 +88,10 @@ vary_planet = (['period',       # free planetary parameters
 fitT.free_parameters(vary_star, vary_planet)
 fitT.do_fit()                   # run the fitting
 
-fitT.print_results()            print some results
-
-Best-fitting stellar parameters # these are not the fit parameters for a lightcurve with two planets
+fitT.print_results()            # print some results
+```
+```
+Best-fitting stellar parameters 
 rho: 5.02680657221
 
 Best-fitting planet parameters for planet 0
@@ -104,5 +105,7 @@ impact: 0.387103707996
 period: 1.2000614885
 T0: 0.700001081846
 rprs: 0.0198908445261
+```
+Note that this output does not come from the code above but from data with planet in, two planets in fact.
 
 
