@@ -9,6 +9,7 @@ class FitTransit():
     #    self.nplanets = self.mod.nplanets
         self.free_parameters(fitparstar=[],
         fitparplanet=[])
+        self.planetguess_d = {}
 
     @property 
     def nplanets(self):
@@ -36,7 +37,7 @@ class FitTransit():
         'ld2', 'ld3', 'ld4', 'dil',
         'veloffset', 'zpt']
         kwnew = dict([(k,v) for k,v in kwargs.iteritems() if k in goodlist])
-        self.mod.add_star(**kwnew)
+        self.mod.update_star(**kwnew)
 
     def update_planet(self,pnum,**kwargs):
         goodlist = ['T0',
@@ -50,7 +51,7 @@ class FitTransit():
             'ell', 
             'alb']
         kwnew = dict([(k,v) for k,v in kwargs.iteritems() if k in goodlist])
-        self.mod.add_planet(replace=pnum,**kwnew)
+        self.mod.update_planet(pnum=pnum,**kwnew)
 
     def add_guess_planet(self, 
         T0=1.0, period=1.0, impact=0.1,
@@ -69,8 +70,7 @@ class FitTransit():
             'occ': occ,
             'ell': ell, 
             'alb': alb}
-        self.planetguess_d = {
-            pname: planet_d}
+        self.planetguess_d[pname] =  planet_d
         self.mod.add_planet(
             T0=T0, period=period, impact=impact,
             rprs=rprs, ecosw=ecosw, esinw=ecosw,
@@ -152,7 +152,7 @@ class FitTransit():
         self.update_star(**fitstar_d)
 
         nps = len(self.fitparstar)
-        npp = len(self.fitparplanet) / self.nplanets
+        npp = len(self.fitparplanet)
         for i in xrange(self.nplanets):
             fitplanet_d = dict(
                 zip(self.fitparplanet,
@@ -242,31 +242,36 @@ def make_plot(time,obsf,model):
 if __name__ == '__main__':
     ##make fake data
     M = ktransit.LCModel()
-    M.add_star()
-    M.add_planet(period=1.001,impact=0.1,T0=1.51,rprs=0.05)
+    M.add_star(rho=5.0)
+    M.add_planet(period=1.00,impact=0.1,T0=1.5,rprs=0.1)
+    M.add_planet(period=1.20,impact=0.4,T0=0.7,rprs=0.02)
     M.add_data()
 
     tmod = M.transitmodel
     #addnoise
     from numpy.random import normal
-    tmod_noisy = tmod + normal(0.0,0.00005,size=len(tmod))
+    tmod_noisy = tmod + normal(0.0,0.00001,size=len(tmod))
 
-    freeparstar = ['rho','zpt']
-    freeparplanet = ['period','rprs','T0','impact']
+    #what shall we fit for
+    freeparstar = ['rho']
+    freeparplanet = [
+    'period','T0','impact','rprs']
 
+    #guess some parameters
     fitT = FitTransit()
-    fitT.add_guess_star(rho=5.0)
-    fitT.add_guess_planet(period=1.0,impact=0.7,T0=1.5,rprs=0.1)
+    fitT.add_guess_star(rho=7.0)
+    fitT.add_guess_planet(period=1.001,impact=0.4,T0=1.501,rprs=0.08)
+    fitT.add_guess_planet(period=1.201,impact=0.7,T0=0.701,rprs=0.01)
     fitT.add_data(time=M.time,flux=tmod_noisy)
     fitT.free_parameters(freeparstar,freeparplanet)
     fitT.do_fit()
 
     #update model
     
-    M.add_star(**fitT.fitresultstellar)
+    M.update_star(**fitT.fitresultstellar)
     for i in xrange(fitT.nplanets):
         use_d = fitT.fitresultplanets['pnum' + str(i)]
-        M.add_planet(replace=i,**use_d)
+        M.update_planet(pnum=i,**use_d)
 
     fig = make_plot(M.time,tmod_noisy+1.0,fitT.transitmodel+1.0)
     fig.savefig('fitresult.pdf')

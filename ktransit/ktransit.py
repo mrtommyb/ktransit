@@ -38,6 +38,15 @@ class LCModel(object):
         self.veloffset = veloffset
         self.zpt = zpt
 
+    def update_star(self,**kwargs):
+        [setattr(self,k,v) for k,v in kwargs.iteritems()]
+
+    def update_planet(self,pnum,**kwargs):
+        for k,v in kwargs.iteritems():
+            valarr = getattr(self,k)
+            valarr[pnum] = v
+            setattr(self,k,valarr)
+
 
     def add_planet(self,replace=None, 
         T0=1.0, period=1.0, impact=0.1,
