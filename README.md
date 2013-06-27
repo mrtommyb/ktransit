@@ -18,7 +18,8 @@ cd ktransit
 python setup.py install
 ```
 
-
+Making a model
+-------------
 The basic module, *ktransit*, will create a transit model. The code uses sensible defaults and only changes parameters explicitly stated. For example, to create a simple model just run
 
 ```python
