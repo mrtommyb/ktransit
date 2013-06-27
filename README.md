@@ -123,6 +123,6 @@ period: 1.2000614885
 T0: 0.700001081846
 rprs: 0.0198908445261
 ```
-The above comes fitting a model with two planets in
+The above comes from fitting a model with two planets in
 
 
