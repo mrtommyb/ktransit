@@ -58,7 +58,7 @@ M.add_data(
         time=numpy.arange(0,10,0.0188),   # timestamps to evaluate the model on
         itime=numpy.arange(0,10,0.0188))  # integration time of each timestamp
 
-tmod = M.transitmodel
+tmod = M.transitmodel # the out of transit data will be 0.0 unless you specify zpt
 plt.plot(M.time,tmod)
 ```
 
@@ -67,18 +67,21 @@ Fitting
 This is the fun part!! Fit a transit model to data. I use the scipy Levenberg–Marquardt least-squares minimization
 You need to give the model an initial guess and tell it what parameters you want to allow to vary, everything else is kept fixed.
 
+The code assumes that the observed data has been normalised and detrended. The default zeropoint is 0.0 so the out of transit data should have a mean of 0.0 unless you want to change the zpt parameter.
+
 ```python
 from ktransit import FitTransit
 
-time = np.arange(0,10,0.0188)   # you need a time and a flux
-flux = np.zeros_like(time)      # there are no transits here :(
+time = np.arange(0,10,0.0188)           # you need a time and a flux
+flux = np.zeros_like(time)              # there are no transits here :(
+ferr = np.ones_like(time) * 0.00001     # uncertainty on the data
 
 fitT = FitTransit()
 fitT.add_guess_star(rho=7.0)    
 fitT.add_guess_planet(
         period=365.25, impact=0.0, 
         T0=0.0, rprs=0.009155)
-fitT.add_data(time=time, flux=flux)
+fitT.add_data(time=time, flux=flux, ferr=ferr)
 
 vary_star = ['rho', 'zpt']      # free stellar parameters
 vary_planet = (['period',       # free planetary parameters
