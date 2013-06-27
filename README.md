@@ -1,8 +1,8 @@
 ktransit
 ========
-**A simple exoplanet transit modeling tool**
+**A simple exoplanet transit modeling tool in python**
 
-This package contains routines to create and/or fit a transiting planet model.
+This python package contains routines to create and/or fit a transiting planet model.
 The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model.
 
 Installation
