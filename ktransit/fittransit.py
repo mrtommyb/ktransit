@@ -221,6 +221,8 @@ def plot_results(time,obsf,model):
     ax2.scatter(time,obsf - model,s=2,color='k',
         label='residuals')
     ax2.legend()
+    leg = ax2.legend(loc='best', fancybox=True)
+    leg.get_frame().set_alpha(0.5)
     ax2.set_xlabel('Time (days)')
     ax2.set_ylabel('Residuals')
     yrng2 = np.max(obsf - model) - np.min(obsf - model)
