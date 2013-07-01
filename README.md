@@ -9,11 +9,11 @@ Installation
 -------
 Install via pip
 ```
-pip install -e git+https://github.com/mrtommyb/kransit#egg=ktransit-dev
+pip install -e git+https://github.com/mrtommyb/ktransit#egg=ktransit-dev
 ```
 or via the git repository
 ```
-git clone https://github.com/mrtommyb/kransit.git
+git clone https://github.com/mrtommyb/ktransit.git
 cd ktransit
 python setup.py install
 ```
