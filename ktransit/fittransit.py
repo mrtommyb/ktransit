@@ -1,7 +1,9 @@
 from __future__ import print_function
-import ktransit 
+import ktransit
 from scipy import optimize
-import numpy as np 
+import numpy as np
+
+
 
 class FitTransit():
 
@@ -11,13 +13,14 @@ class FitTransit():
         self.free_parameters(fitparstar=[],
         fitparplanet=[])
         self.planetguess_d = {}
+        self.uservdata = False
 
-    @property 
+    @property
     def nplanets(self):
         self._nplanets = self.mod.nplanets
         return self._nplanets
 
-    def add_guess_star(self,rho=1.5, ld1=0.2, 
+    def add_guess_star(self,rho=1.5, ld1=0.2,
         ld2=0.4, ld3=0.0, ld4=0.0, dil=0.0,
         veloffset=0.0, zpt=0.0):
         self.starguess_d={
@@ -29,7 +32,7 @@ class FitTransit():
             'dil': dil,
             'veloffset': veloffset,
             'zpt': zpt}
-        self.mod.add_star(rho, ld1, 
+        self.mod.add_star(rho, ld1,
         ld2, ld3, ld4, dil,
         veloffset, zpt)
 
@@ -45,19 +48,19 @@ class FitTransit():
             'period',
             'impact',
             'rprs',
-            'ecosw', 
+            'ecosw',
             'esinw',
             'rvamp',
             'occ',
-            'ell', 
+            'ell',
             'alb']
         kwnew = dict([(k,v) for k,v in kwargs.iteritems() if k in goodlist])
         self.mod.update_planet(pnum=pnum,**kwnew)
 
-    def add_guess_planet(self, 
+    def add_guess_planet(self,
         T0=1.0, period=1.0, impact=0.1,
         rprs=0.1, ecosw=0.0, esinw=0.0,
-        rvamp=0.0, occ=0.0, ell=0.0, 
+        rvamp=0.0, occ=0.0, ell=0.0,
         alb=0.0):
         pname = 'pnum' + str(self.nplanets)
         planet_d = {
@@ -65,21 +68,21 @@ class FitTransit():
             'period': period,
             'impact': impact,
             'rprs': rprs,
-            'ecosw': ecosw, 
+            'ecosw': ecosw,
             'esinw': esinw,
             'rvamp': rvamp,
             'occ': occ,
-            'ell': ell, 
+            'ell': ell,
             'alb': alb}
         self.planetguess_d[pname] =  planet_d
         self.mod.add_planet(
             T0=T0, period=period, impact=impact,
             rprs=rprs, ecosw=ecosw, esinw=ecosw,
-            rvamp=rvamp, occ=occ, ell=ell, 
+            rvamp=rvamp, occ=occ, ell=ell,
             alb=alb)
 
     def add_data(self,time=None, flux=None,
-        ferr=None, itime=None, 
+        ferr=None, itime=None,
         ntt=None, tobs=None, omc=None,
         datatype=None):
 
@@ -126,9 +129,18 @@ class FitTransit():
         else:
             self.datatype = datatype
 
-        self.mod.add_data(time=time, itime=itime, 
+        self.mod.add_data(time=time, itime=itime,
             ntt=ntt, tobs=tobs, omc=omc,
             datatype=datatype)
+
+    def add_rv(self,rvtime=None,rvval=None,rverr=None):
+        self.uservdata = True
+        self.rvtime = rvtime
+        self.rvval = rvval
+        self.rverr = rverr
+
+        self.mod.add_rv(rvtime=rvtime)
+
 
     def free_parameters(self,
         fitparstar=['rho','zpt'],
@@ -140,8 +152,17 @@ class FitTransit():
         self._tmod = self.mod.transitmodel
         return self._tmod
 
+    def get_rv_model(self):
+        self.rv_model = self.mod._rvmodel
+        return self.rv_model
+
     def residuals(self):
         self._res =  (self.flux - self.calc_model()) / self.ferr
+
+        if self.uservdata:
+            self._res = np.r_[
+                self._res,(self.rvval - self.get_rv_model()) / self.rverr]
+
         return self._res
 
 
@@ -177,6 +198,7 @@ class FitTransit():
 
         self.transitmodel = self.mod.transitmodel
 
+
     def make_fitoutdicts(self):
         self.fitresult = self.fitout[0]
         nps = len(self.fitparstar)
@@ -200,6 +222,15 @@ class FitTransit():
             for k,v in self.fitresultplanets[pnum].iteritems():
                 print(u'{0}: {1}'.format(k, v))
             print()
+
+    def plot_results(self):
+        time = self.time
+        obsf = self.obsf
+        model = self.transitmodel
+        fig = plot_results(time,obsf,model)
+        return fig
+
+
 
 
 
@@ -235,6 +266,10 @@ def plot_results(time,obsf,model):
 
     return fig
 
+def folded_plot(time,obsf,model,period,epoch):
+    import matplotlib.pyplot as plt
+
+
 if __name__ == '__main__':
     ##make fake data
     M = ktransit.LCModel()
@@ -263,7 +298,7 @@ if __name__ == '__main__':
     fitT.do_fit()
 
     #update model
-    
+
     M.update_star(**fitT.fitresultstellar)
     for i in xrange(fitT.nplanets):
         use_d = fitT.fitresultplanets['pnum' + str(i)]

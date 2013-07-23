@@ -15,8 +15,9 @@ class LCModel(object):
         self.occ = []
         self.ell = []
         self.alb = []
+        self.rvtime = []
 
-    def add_star(self, rho=1.5, ld1=0.2, 
+    def add_star(self, rho=1.5, ld1=0.2,
         ld2=0.4, ld3=0.0, ld4=0.0, dil=0.0,
         veloffset=0.0, zpt=0.0):
         """
@@ -28,8 +29,8 @@ class LCModel(object):
         darkening law is used
 
         rho = mean stellar density in g/cc**3
-        dil is the proportion of the total light not coming from the 
-            target star 0.5 means thatyou ahve two stars of equal 
+        dil is the proportion of the total light not coming from the
+            target star 0.5 means thatyou ahve two stars of equal
             brightness
         """
         self.rho = rho
@@ -48,10 +49,10 @@ class LCModel(object):
             setattr(self,k,valarr)
 
 
-    def add_planet(self,replace=None, 
+    def add_planet(self,replace=None,
         T0=1.0, period=1.0, impact=0.1,
         rprs=0.1, ecosw=0.0, esinw=0.0,
-        rvamp=0.0, occ=0.0, ell=0.0, 
+        rvamp=0.0, occ=0.0, ell=0.0,
         alb=0.0):
         if replace == None:
             self.nplanets = self.nplanets + 1
@@ -59,7 +60,7 @@ class LCModel(object):
             self.add_dimention_to_planet_params()
         else:
             pnum = replace
-        
+
         self.T0[pnum] = T0
         self.period[pnum] = period
         self.impact[pnum] = impact
@@ -83,7 +84,7 @@ class LCModel(object):
         self.ell = np.r_[self.ell,0.0]
         self.alb = np.r_[self.alb,0.0]
 
-    def add_data(self, time=None, itime=None, 
+    def add_data(self, time=None, itime=None,
         ntt=None, tobs=None, omc=None,
         datatype=None):
         """
@@ -122,11 +123,19 @@ class LCModel(object):
         else:
             self.datatype = datatype
 
+    def add_rv(self,rvtime=None):
+        if rvtime is None:
+            self.rvtime = np.sin(
+                np.arange(self.T0[0],4.*self.period[0],0.01))
+        else:
+            self.rvtime = rvtime
+
+
     @property
     def transitmodel(self):
         """
         return a transit model
-        calling of model is 
+        calling of model is
 
         transitmodel(nplanets,sol,time,itime,
         ntt,tobs,omc,datatype)
@@ -147,11 +156,36 @@ class LCModel(object):
             self.rvamp,self.occ,
             self.ell,self.alb]).T.flatten()
 
-        self._transitmodel = transitmodel(self.nplanets,
-            sol,self.time,self.itime,self.ntt,
-            self.tobs,self.omc,self.datatype) - 1.0
+        if np.shape(self.rvtime)[0] != 0:
+            time = np.r_[self.time,self.rvtime]
+            itime = np.r_[self.itime,np.zeros_like(self.rvtime)]
+            datatype = np.r_[
+                self.datatype,np.ones_like(self.rvtime)]
 
-        return self._transitmodel
+            fmod = transitmodel(self.nplanets,
+                sol,time,itime,self.ntt,
+                self.tobs,self.omc,datatype)
+            nrv = np.shape(self.rvtime)[0]
+            self._transitmodel = fmod[:-nrv]
+            self._rvmodel = fmod[-nrv:]
+
+        else:
+            time = self.time
+            itime = self.itime
+            datatype = self.datatype
+
+            self._transitmodel = transitmodel(self.nplanets,
+                sol,time,itime,self.ntt,
+                self.tobs,self.omc,datatype)
+            self._rvmodel = None
+
+
+
+        return self._transitmodel - 1.0
+
+    @property
+    def rvmodel(self):
+        return self._rvmodel
 
 
 
@@ -162,7 +196,7 @@ class LCModel(object):
         tobs = np.empty([self._nplanets,npt])
         omc = np.empty([self._nplanets,npt])
         datatype = np.zeros(npt)
-        return [itime,ntt,tobs,omc,datatype] 
+        return [itime,ntt,tobs,omc,datatype]
 
 
 def give_me_earth():
@@ -171,9 +205,9 @@ def give_me_earth():
     M.add_planet(rprs=0.009155,period=365.25)
     M.add_data(time=np.arange(0,1000,0.0188))
     return (M.time, M.transitmodel)
-        
 
-        
+
+
 
 
 

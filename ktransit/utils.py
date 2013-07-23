@@ -1,5 +1,6 @@
-import numpy as np 
+import numpy as np
 import kplr
+import urllib2
 
 def med_filt(x, y, dt=4.):
     """
@@ -34,12 +35,13 @@ def i_hate_nans(time,flux,ferr):
     finite = np.isfinite(flux)
     return time[finite],flux[finite],ferr[finite]
 
-def get_clean_data(kic):
+def get_clean_data(kic,return_extras=False,remove_earth_point=False):
     client = kplr.API()
     star = client.star(kic)
     lcs = star.get_light_curves(short_cadence=False)
-    time, flux, ferr, quality,quarter = [], [], [], [], []
+    time, flux, ferr, quality,quarter,cadnum = [], [], [], [], [], []
     for lc in lcs:
+        try:
             with lc.open() as f:
                 # The lightcurve data are in the first FITS HDU.
                 hdu_data = f[1].data
@@ -53,12 +55,29 @@ def get_clean_data(kic):
                 quality = np.r_[quality,hdu_data["sap_quality"]]
                 quarter = np.r_[quarter,f[0].header["QUARTER"] +
                     np.zeros(len(hdu_data["time"]))]
+                cadnum = np.r_[cadnum,hdu_data["CADENCENO"]]
+        except urllib2.HTTPError:
+            continue
 
     flux, ferr = byebyebaddata(flux,ferr,quality)
+    if remove_earth_point:
+        flux = remove_post_earth_point(cadnum,flux,quality)
     flux, ferr = norm_by_quarter(flux, ferr,quarter)
     cflux = (flux / med_filt(time,flux,dt=1.0)) - 1.0
 
     time,cflux,ferr = i_hate_nans(time,cflux,ferr)
+    if return_extras:
+        extra_d = {'quality': quality,
+                    'cadnum': cadnum,
+                    'quarter': quarter}
+        return (time,cflux,ferr), star, extra_d
+    else:
+        return (time,cflux,ferr), star,
 
-    return (time,cflux,ferr), star
-
+def remove_post_earth_point(cadnum,flux,quality,window=95):
+    ep_idx = [i for i,x in enumerate(
+        quality) if x in [1,2,8]]
+    for tep in cadnum[ep_idx]:
+        trange = np.logical_and(cadnum >= tep,cadnum < tep + window)
+        flux[trange] = np.nan
+    return flux
