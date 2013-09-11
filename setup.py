@@ -28,7 +28,7 @@ tmodtom = Extension("ktransit._tmodtom", ["ktransit/tmodtom.pyf", "ktransit/tmod
 setup(
     name="ktransit",
     url="https://github.com/mrtommyb/ktransit",
-    version="0.0.3",
+    version="0.1.0",
     author="Tom Barclay",
     author_email="tom@tombarclay.com",
     description="",
