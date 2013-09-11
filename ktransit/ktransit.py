@@ -123,12 +123,18 @@ class LCModel(object):
         else:
             self.datatype = datatype
 
-    def add_rv(self,rvtime=None):
+    def add_rv(self,rvtime=None, rvitime=None):
         if rvtime is None:
-            self.rvtime = np.sin(
-                np.arange(self.T0[0],4.*self.period[0],0.01))
+            self.rvtime = np.arange(
+                self.T0[0],4.*self.period[0],0.01)
         else:
             self.rvtime = rvtime
+
+        if rvitime is None:
+            default_cadence = 30. / 1440. #30 mins
+            self.rvitime = np.zeros_like(rvtime) + default_cadence
+        else:
+            self.rvitime = rvitime
 
 
     @property
@@ -158,7 +164,7 @@ class LCModel(object):
 
         if np.shape(self.rvtime)[0] != 0:
             time = np.r_[self.time,self.rvtime]
-            itime = np.r_[self.itime,np.zeros_like(self.rvtime)]
+            itime = np.r_[self.itime,self.rvitime]
             datatype = np.r_[
                 self.datatype,np.ones_like(self.rvtime)]
 
@@ -185,7 +191,11 @@ class LCModel(object):
 
     @property
     def rvmodel(self):
-        return self._rvmodel
+        try:
+            return self._rvmodel
+        except AttributeError:
+            tmod = self.transitmodel
+            return self._rvmodel
 
 
 
