@@ -126,13 +126,13 @@ class LCModel(object):
     def add_rv(self,rvtime=None, rvitime=None):
         if rvtime is None:
             self.rvtime = np.arange(
-                self.T0[0],4.*self.period[0],0.01)
+                self.T0[0],4.*self.period[0],1.0)
         else:
             self.rvtime = rvtime
 
         if rvitime is None:
             default_cadence = 30. / 1440. #30 mins
-            self.rvitime = np.zeros_like(rvtime) + default_cadence
+            self.rvitime = np.zeros_like(self.rvtime) + default_cadence
         else:
             self.rvitime = rvitime
 
