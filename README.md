@@ -3,7 +3,9 @@ ktransit
 **A simple exoplanet transit modeling tool in python**
 
 This python package contains routines to create and/or fit a transiting planet model.
-The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model.
+The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model. The code will calculate a full orbital model and eccentricity can be allowed to vary. 
+
+With version 0.3, radial velocity data can now be calcaulted via the model and included in the fit
 
 Installation
 -------
@@ -134,4 +136,46 @@ The plot below shows a three planet model fit to the Kepler-37 data. This plot c
 ![transitplot](https://raw.github.com/mrtommyb/ktransit/master/examples/ktransitfit.png)
 
 
+Including radial velocity data
+-------
+New in version 0.3, you can now include radial velocity data.
+```python
+import ktransit
+import matplotlib.pyplot as plt
+import numpy
+
+M = ktransit.LCModel()
+M.add_star(
+        rho=1.5,
+        ld1=0.2,
+        ld2=0.4, 
+        ld3=0.0,
+        ld4=0.0, 
+        dil=0.0,
+        zpt=0.0, 
+        veloffset=10 # new keyword, the radial velocity zero-point offset in m/s   
+        )
+M.add_planet(
+        T0=1.0,     
+        period=1.0,
+        impact=0.1,
+        rprs=0.1,  
+        ecosw=0.0, 
+        esinw=0.0,
+        occ=0.0,  
+        rvamp=100.) # radial velocity semi-amplitude in m/s
+
+M.add_data(
+        time=numpy.arange(0,10,0.0188),   
+        itime=numpy.arange(0,10,0.0188))  
+
+M.add_rv(
+        time=numpy.arange(0,10,2.),    # radial velocity observation timestamps
+        itime=numpy.arange(0,10,0.02)) # integration time of each timestamp
+
+tmod = M.transitmodel
+rvmodel = M.rvmodel
+plt.plot(M.time,tmod)
+plt.plot(M.rvtime,rvmodel)
+```
 
