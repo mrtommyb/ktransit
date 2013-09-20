@@ -70,8 +70,8 @@ M.add_planet(
 M.add_planet() # you can add as many planets as you like (up to 10)
 
 M.add_data(
-        time=numpy.arange(0,10,0.0188),   # timestamps to evaluate the model on
-        itime=numpy.arange(0,10,0.0188))  # integration time of each timestamp
+        time=numpy.arange(0,10,0.0188),                                 # timestamps to evaluate the model on
+        itime=numpy.zeros_like(numpy.arange(0,10,0.0188))+0.0188 )      # integration time of each timestamp
 
 tmod = M.transitmodel # the out of transit data will be 0.0 unless you specify zpt
 plt.plot(M.time,tmod)
@@ -167,11 +167,11 @@ M.add_planet(
 
 M.add_data(
         time=numpy.arange(0,10,0.0188),   
-        itime=numpy.arange(0,10,0.0188))  
+        itime=numpy.zeros_like(numpy.arange(0,10,0.0188))+0.0188 )
 
 M.add_rv(
-        time=numpy.arange(0,10,2.),    # radial velocity observation timestamps
-        itime=numpy.arange(0,10,0.02)) # integration time of each timestamp
+        time=numpy.arange(0,10,2.),                             # radial velocity observation timestamps
+        itime=numpy.zeros_like(numpy.arange(0,10,2.))+0.02 )    # integration time of each timestamp
 
 tmod = M.transitmodel
 rvmodel = M.rvmodel
