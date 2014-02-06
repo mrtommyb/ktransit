@@ -169,9 +169,8 @@ M.add_data(
         time=numpy.arange(0,10,0.0188),   
         itime=numpy.zeros_like(numpy.arange(0,10,0.0188))+0.0188 )
 
-M.add_rv(
-        rvtime=numpy.arange(0,10,2.),                             # radial velocity observation timestamps
-        rvval=numpy.zeros_like(numpy.arange(0,10,2.))+20 )    # radial velocity amplitude in m/s
+M.add_rv(time=numpy.arange(0,10,2.),                             # radial velocity observation timestamps
+        itime=numpy.zeros_like(numpy.arange(0,10,2.))+0.02 )    # integration time of each timestamp
 
 tmod = M.transitmodel
 rvmodel = M.rvmodel
