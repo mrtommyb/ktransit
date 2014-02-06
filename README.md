@@ -11,7 +11,7 @@ Installation
 -------
 Install via pip
 ```
-pip install -e git+https://github.com/mrtommyb/ktransit#egg=ktransit-dev
+pip install ktransit
 ```
 or via the git repository
 ```
