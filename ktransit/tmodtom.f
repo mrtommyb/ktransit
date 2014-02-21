@@ -26,7 +26,7 @@ Cf2py intent(out) :: tmodel
       pid2=Pi/2.0d0
       G=6.674d-11 !N m^2 kg^-2  Gravitation constant
       Cs=2.99792458e8 !Speed of light
-      fDB=0.9925 !Doppler Boosting factor
+      fDB=3.9925 !Doppler Boosting factor
       
       c1=sol(2)      !non-linear limb-darkening
       c2=sol(3)
