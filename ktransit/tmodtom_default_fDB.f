@@ -20,14 +20,14 @@ Cf2py intent(out) :: tmodel
      .  occ(nintg),bp(nintg)
       integer ntt(nplanetmax)
       double precision tobs(nplanetmax,nmax),omc(nplanetmax,nmax),ttcor
-
+      
       Pi=acos(-1.d0)!define Pi and 2*Pi
-      tPi=2.0d0*Pi
+      tPi=2.0d0*Pi 
       pid2=Pi/2.0d0
       G=6.674d-11 !N m^2 kg^-2  Gravitation constant
       Cs=2.99792458e8 !Speed of light
-      fDB=5.46 !Doppler Boosting factor
-
+      fDB=0.9925 !Doppler Boosting factor
+      
       c1=sol(2)      !non-linear limb-darkening
       c2=sol(3)
       c3=sol(4)
@@ -35,13 +35,13 @@ Cf2py intent(out) :: tmodel
       dil=sol(6)     !dilution parameter (model scaling)
       voff=sol(7)    !velocity zero point
       zpt=sol(8)     !flux zero point.
-
+      
       do 17 i=1,npt
         tmodel(i)=0.0d0
  17   continue
-
+      
       do 16 ii=1,nplanet
-
+      
         per=sol(10*(ii-1)+8+2)     !Period (days)
 c        sol(10*(ii-1)+8+3)=abs(sol(10*(ii-1)+8+3)) !make b positive
 c        bs2=abs(sol(10*(ii-1)+8+3))
@@ -64,13 +64,13 @@ c        write(0,*) bs2,b
             endif
             if((ecw.gt.0.0d0).and.(esw.lt.0.0d0))then
                 w=tPi+w
-            elseif((ecw.lt.0.0d0).and.(esw.ge.0.0d0))then
+            elseif((ecw.lt.0.0d0).and.(esw.ge.0.0d0))then 
                 w=Pi+w
             elseif((ecw.le.0.0d0).and.(esw.lt.0.0d0))then
                 w=Pi+w
             endif
-        endif
-
+        endif     
+      
 c        write(0,*) sol(7),sol(8),w
 c        write(0,*) "w:",acos(sol(7)/eccn),asin(sol(8)/eccn)
 c        read(5,*)
@@ -87,21 +87,21 @@ C       Find inclination
 
 c        K=abs(sol(10*(ii-1)+8+7))
         K=sol(10*(ii-1)+8+7)
-
+      
         ted=sol(10*(ii-1)+8+8)/1.0d6 !Occultation Depth
         ell=sol(10*(ii-1)+8+9)/1.0d6 !Ellipsoidal variations
         ag=sol(10*(ii-1)+8+10)/1.0d6 !Phase changes
-
+      
         dnintg=dble(nintg) !convert integer to double
         dnintgm1=2.0*dnintg-2.0
-
+      
 C     Find phase at centre of transit
         epoch=sol(10*(ii-1)+8+1)   !center of transit time (days)
 c        phi1=(epoch/per-int(epoch/per))*twopi
         Eanom=tan(w/2.0d0)/sqrt((1.0d0+eccn)/(1.0d0-eccn)) !mean anomaly
         Eanom=2.0d0*atan(Eanom)
         phi0=Eanom-eccn*sin(Eanom)
-
+      
         do 10 i=1,npt
             call lininterp(tobs,omc,nplanetmax,nmax,ii,ntt,time(i),
      .          ttcor)
@@ -116,7 +116,7 @@ c                t=t-ttcor
                 t=time(i)+itime(i)*(2.0*dble(j)-dnintg-1.0)/dnintgm1-
      .              epoch-ttcor
 
-
+     
 c                write(0,*) itime(i)
 C               get orbital position (mean anomaly)
                 phi=t/per-floor(t/per)
@@ -126,7 +126,7 @@ C               get orbital position (mean anomaly)
                 if(Manom.lt.0.0d0) Manom=Manom+tPi
                 call kepler(Manom,Eanom,eccn)
                 Tanom=trueanomaly(eccn,Eanom)
-                if(phi.gt.Pi) phi=phi-tPi
+                if(phi.gt.Pi) phi=phi-tPi            
                 drs=distance(adrs,eccn,Tanom)
                 x2=drs*Sin(Tanom-w)
                 y2=drs*Cos(Tanom-w)*cos(incl)
@@ -148,7 +148,7 @@ c              if(Manom.gt.tPi) Manom=Manom-tPi
 c              if(Manom.lt.0.0d0) Manom=Manom+tPi
 c              call kepler(Manom,Eanom,eccn)
 c              Tanom=trueanomaly(eccn,Eanom)
-c                if(phi.gt.Pi) phi=phi-tPi
+c                if(phi.gt.Pi) phi=phi-tPi            
 c                drs=distance(adrs,eccn,Tanom)
 c                bt(j)=sqrt(bs2+(drs*sin(Tanom-phi0))**2)
 c            endif
@@ -161,10 +161,10 @@ c                vt(j)=-K*(cos(Tanom+w)+ecw)
      .              cos(2.0d0*(Pid2+Tanom-w))
 c                tide(j)=ell*(drs/adrs)**(1.0d0/3.0d0)*
 c     .              cos(2.0d0*(Pid2+phi))
-
+     
                 alb(j)=albedomod(Pi,ag,Tanom-w)*adrs/drs
 c                alb(j)=albedomod(Pi,ag,phi)*adrs/drs
-
+            
                 if(j.eq.nintg/2+1)then
 c                    phase=Tanom-w!phi(nintg/2+1)
 c                    if(phase.gt.Pi) phase=phase-tPi
@@ -204,7 +204,7 @@ c                         write(6,550) RpRs,(bt(j),tflux(j),j=1,nintg)
                     tm=0.0d0
                     do 12 j=1,nintg
                         if(RpRs.le.0.0)tflux(j)=1.0d0
-C                   model=transit+doppler+ellipsodial
+C                   model=transit+doppler+ellipsodial 
                         tm=tm+tflux(j)-fDB*vt(j)/Cs+tide(j)+alb(j)
  12                 continue
                     tm=tm/dnintg
@@ -248,15 +248,15 @@ c            read(5,*)
             endif
             tmodel(i)=tmodel(i)+tm
  10     continue
-
+ 
 C     Need to add zero points (voff, zpt)
-
+      
 c        do 9 i=1,npt
 c            write(6,*) time(i),tmodel(i)
 c 9      continue
-
- 16   continue
-
+  
+ 16   continue  
+ 
       do 15 i=1,npt
         if(dtype(i).eq.0)then
             tmodel(i)=tmodel(i)+zpt+1.0d0
@@ -264,10 +264,10 @@ c 9      continue
             tmodel(i)=tmodel(i)+voff
         endif
  15   continue
-
+      
       return
       end
-
+      
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       double precision function albedomod(Pi,ag,phi)
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -278,16 +278,16 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       if(phi.gt.2.0*Pi) phi=phi-2.0*Pi
 
 
-      alpha=abs(phi)
+      alpha=abs(phi)      
 c      alpha=2.0*Pi*t/Per+phi
       alpha=alpha-2.0*Pi*int(alpha/(2.0*Pi))
       if(alpha.gt.Pi) alpha=abs(alpha-2.0*pi)
 c      write(6,*) t,alpha
 c      phase=(1.0d0+cos(alpha))/2.0d0
       phase=(sin(alpha)+(Pi-alpha)*cos(alpha))/Pi  !Lambertian Sphere
-
+      
       albedomod=ag*phase
-
+      
       return
       end
 
@@ -296,9 +296,9 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       implicit none
       double precision asep,eccn,Tanom
-
+      
       distance=asep*(1.0d0-eccn*eccn)/(1+eccn*cos(Tanom))
-
+      
       return
       end
 
@@ -307,11 +307,11 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       implicit none
       double precision eccn,Eanom,temp(2)
-
+      
       temp(1)=sqrt((1.0d0+eccn)/(1.0d0-eccn))
       temp(2)=tan(Eanom/2.)
       trueanomaly=2.0d0*atan(temp(1)*temp(2))
-
+      
       return
       end
 
@@ -338,7 +338,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
       return
       end
-
+      
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine invkepler(Eanom,Manom,eccn)
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -363,13 +363,13 @@ c      if(i.ge.itmax) write(0,*) "invkepler itmax"
 
       return
       end
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC 
       subroutine readttfile(nunit,nplanetmax,nmax,nplanet,ntt,tobs,omc)
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       implicit none
       integer nunit,ntt(nplanet),i,nmax,nplanetmax,nplanet
       double precision tobs(nplanetmax,nmax),omc(nplanetmax,nmax),err
-
+      
       i=1
  10   read(nunit,*,end=11) tobs(nplanet,i),omc(nplanet,i),err
         if(err.eq.0.0d0) goto 10
@@ -377,17 +377,17 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       goto 10
  11   continue
       ntt(nplanet)=i-1
-
+      
       return
       end
 
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC      
       subroutine lininterp(x,y,npmax,nmax,np,npt,xin,yout)
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       implicit none
       integer i,npmax,nmax,npt(npmax),np
       double precision x(npmax,nmax),y(npmax,nmax),xin,yout
-
+      
 C     Default is zero
       yout=0.0d0
       if(npt(np).eq.0) return
@@ -409,7 +409,7 @@ c      write(0,*) (rhoierr(i),i=1,npt)
       endif
 c      write(0,*) drho,dsig
 c      read(5,*)
-
+ 
       return
       end
 
@@ -440,7 +440,7 @@ C mu0  fraction of flux at each z0 for a uniform source
 C
 C Limb darkening has the form:
 C  I(r)=[1-u1*(1-sqrt(1-(r/rs)^2))-u2*(1-sqrt(1-(r/rs)^2))^2]/(1-u1/3-u2/6)/pi
-C
+C 
 C To use this routine
 C
 C Now, compute pure occultation curve:
@@ -481,7 +481,7 @@ C Equation (26):
 C the occulting object transits the source star (but doesn't
 C completely cover it):
         if(z.le.1.d0-p) lambdae(i)=p*p
-C the edge of the occulting star lies at the origin- special
+C the edge of the occulting star lies at the origin- special 
 C expressions in this case:
         if(abs(z-p).lt.1.d-4*(z+p)) then
 C Table 3, Case V.:
@@ -576,7 +576,7 @@ C Equation 25:
      *THIRD=1.d0/3.d0,C1=.3d0,C2=1.d0/7.d0,C3=.375d0,C4=9.d0/22.d0)
       REAL*8 alamb,ave,s,w,xt,yt
       if(x.lt.0..or.y.eq.0..or.(x+abs(y)).lt.TINY.or.(x+
-     *abs(y)).gt.BIG.or.(y.lt.-COMP1.and.x.gt.0..and.x.lt.COMP2))pause
+     *abs(y)).gt.BIG.or.(y.lt.-COMP1.and.x.gt.0..and.x.lt.COMP2))pause 
      *'invalid arguments in rc'
       if(y.gt.0.d0)then
         xt=x
@@ -744,7 +744,7 @@ C     Adapted from Mandel and Agol, 2002, ApJ 580, L171
       double precision R1,R2,x1,x2(nintg),y1,y2(nintg),c(4),
      .  c1,c2,c3,c4,mulimb0(nintg),mulimbf(nintg,5),rl,b0(nintg),
      .  mu(nintg),dist(nintg)
-
+      
       mu=0
 
       c1=c(1)
@@ -762,7 +762,7 @@ c        else
             b0(i)=(R1+R2)*dist(i)/R1
 c        endif
  10   continue
-
+      
 c      write(6,500) "hello",(b0(i),i=1,nintg)
  500  format(A5,11(1X,F5.3))
       if(sflag.lt.nintg) then
@@ -780,7 +780,7 @@ c        if(dist(i).ge.1.0d0) mulimb0(i)=1.0d0
  11   continue
       mandelagol=mandelagol/dble(nintg)
 c      write(6,*) "hello2",mandelagol
-
+   
       return
       end
 
@@ -790,13 +790,13 @@ c      write(6,*) "hello2",mandelagol
 c      parameter (nz=201)
       real*8 p,c1,c2,c3,c4,z(nz),mu(nz),i1,norm,
      &       x,tmp,iofr,pi
-C This routine approximates the lightcurve for a small
+C This routine approximates the lightcurve for a small 
 C planet. (See section 5 of Mandel & Agol (2002) for
 C details):
 C Input:
 C  p      ratio of planet radius to stellar radius
 C  c1-c4  non-linear limb-darkening coefficients
-C  z      impact parameters (positive number normalized to stellar
+C  z      impact parameters (positive number normalized to stellar 
 C        radius)- this is an array which MUST be input to the routine
 C  NOTE:  nz must match the size of z & mu in calling routine
 C Output:
@@ -858,7 +858,7 @@ C   b0        impact parameter normalized to source radius
 C Output:
 C  mulimb0 limb-darkened magnification
 C  mulimbf lightcurves for each component
-C
+C  
 C  First, make grid in radius:
 C  Call magnification of uniform source:
       call occultuniform(b0,rl,mulimb0,nb)
@@ -927,7 +927,7 @@ C  Equation (29):
             mulimb(i)=((1.d0-c1-c2-c3-c4)*mulimb0(i)+c1*mulimbhalf(i)*dt
      &        +c2*mulimb1(i)*dt+c3*mulimb3half(i)*dt+c4*mulimb2(i)*dt)
      &        /omega
-            if(mulimb(i)+mulimbp(i).ne.0.d0) then
+            if(mulimb(i)+mulimbp(i).ne.0.d0) then 
               dmumax=max(dmumax,abs(mulimb(i)-mulimbp(i))/(mulimb(i)+
      &               mulimbp(i)))
             endif
@@ -947,7 +947,7 @@ C  Equation (29):
       enddo
       return
       end
-
+      
       subroutine occultuniform(b0,w,muo1,nb)
       implicit none
       integer i,nb
@@ -957,14 +957,14 @@ C  Equation (29):
 C  This routine computes the lightcurve for occultation
 C  of a uniform source without microlensing  (Mandel & Agol 2002).
 C Input:
-C
+C 
 C  rs   radius of the source (set to unity)
 C  b0   impact parameter in units of rs
 C  w    occulting star size in units of rs
-C
+C 
 C Output:
 C  muo1 fraction of flux at each b0 for a uniform source
-C
+C 
 C  Now, compute pure occultation curve:
       do i=1,nb
 C  substitute z=b0(i) to shorten expressions
@@ -999,4 +999,4 @@ C  completely cover it):
 C muo1=1.d0-lambdae
       return
       end
-
+      

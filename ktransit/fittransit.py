@@ -1,11 +1,11 @@
-from __future__ import print_function
+from __future__ import division, print_function
 import ktransit
 from scipy import optimize
 import numpy as np
 
 
 
-class FitTransit():
+class FitTransit(object):
 
     def __init__(self):
         self.mod = ktransit.LCModel()
@@ -230,6 +230,35 @@ class FitTransit():
         fig = plot_results(time,obsf,model)
         return fig
 
+class FitTransitWiener(FitTransit):
+
+    def __init__(self):
+        super(FitTransitWiener, self).__init__()
+        try:
+            from astroML.filters import wiener_filter
+            self.wiener_filter = wiener_filter
+        except ImportError:
+            print('astroLM require to use the Wiener function')
+            import sys
+            sys.exit(1)
+
+    def residuals(self):
+        cm = self.calc_model()
+        res =  self.flux - cm
+
+        self._ffilt = self.wiener_filter(self.time, res)
+
+        self._res = (self.flux - (self._ffilt + cm)) / self.ferr
+
+        if self.uservdata:
+            self._res = np.r_[
+                self._res,(
+                    self.rvval - self.get_rv_model()) / self.rverr]
+
+        return self._res
+
+
+
 
 
 
@@ -268,6 +297,9 @@ def plot_results(time,obsf,model):
 
 def folded_plot(time,obsf,model,period,epoch):
     import matplotlib.pyplot as plt
+    raise NotImplementedError
+
+
 
 
 if __name__ == '__main__':
