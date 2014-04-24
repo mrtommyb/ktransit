@@ -128,6 +128,8 @@ C               get orbital position (mean anomaly)
                 Tanom=trueanomaly(eccn,Eanom)
                 if(phi.gt.Pi) phi=phi-tPi
                 drs=distance(adrs,eccn,Tanom)
+C               Added this (2014/04/23)
+                incl=acos(b/drs)
                 x2=drs*Sin(Tanom-w)
                 y2=drs*Cos(Tanom-w)*cos(incl)
 

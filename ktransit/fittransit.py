@@ -2,8 +2,7 @@ from __future__ import division, print_function
 import ktransit
 from scipy import optimize
 import numpy as np
-
-
+from wiener2 import wiener2, wienerLG
 
 class FitTransit(object):
 
@@ -257,7 +256,55 @@ class FitTransitWiener(FitTransit):
 
         return self._res
 
+class FitTransitWienerL(FitTransit):
 
+    def __init__(self,lowcut=None):
+        super(FitTransitWienerL, self).__init__()
+        self.wiener2 = wiener2
+        self.lowcut = lowcut
+
+
+    def residuals(self):
+        cm = self.calc_model()
+        res =  self.flux - cm
+
+        self._ffilt = self.wiener2(self.time, res,lowcut=self.lowcut)
+
+        self._res = (self.flux - (self._ffilt + cm)) / self.ferr
+
+        if self.uservdata:
+            self._res = np.r_[
+                self._res,(
+                    self.rvval - self.get_rv_model()) / self.rverr]
+
+        return self._res
+
+class FitTransitWienerLG(FitTransit):
+
+    def __init__(self,lowcut=None,Gauss_bounds=None,
+        signal_params=None):
+        super(FitTransitWienerLG, self).__init__()
+        self.wiener2 = wienerLG
+        self.lowcut = lowcut
+        self.Gauss_bounds = Gauss_bounds
+        self.signal_params = signal_params
+
+
+    def residuals(self):
+        cm = self.calc_model()
+        res =  self.flux - cm
+
+        self._ffilt = self.wiener2(self.time, res,lowcut=self.lowcut,
+            Gauss_bounds=self.Gauss_bounds,signal_params=self.signal_params)
+
+        self._res = (self.flux - (self._ffilt + cm)) / self.ferr
+
+        if self.uservdata:
+            self._res = np.r_[
+                self._res,(
+                    self.rvval - self.get_rv_model()) / self.rverr]
+
+        return self._res
 
 
 
