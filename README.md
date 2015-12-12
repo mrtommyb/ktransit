@@ -3,6 +3,7 @@ ktransit
 **A simple exoplanet transit modeling tool in python**
 
 [![DOI](https://zenodo.org/badge/19600/mrtommyb/ktransit.svg)](https://zenodo.org/badge/latestdoi/19600/mrtommyb/ktransit) [![PyPI](http://img.shields.io/pypi/v/ktransit.svg)](https://pypi.python.org/pypi/ktransit/) 
+[![Travis status](http://img.shields.io/travis/mrtommyb/ktransit/master.svg)](http://travis-ci.org/mrtommyb/ktransit)
 
 This python package contains routines to create and/or fit a transiting planet model.
 The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model. The code will calculate a full orbital model and eccentricity can be allowed to vary. 
