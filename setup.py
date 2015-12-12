@@ -23,6 +23,7 @@ setup(
     author="Tom Barclay",
     author_email="tom@tombarclay.com",
     packages=["ktransit", ],
+    package_dir={'ktransit':'ktransit'},
     ext_modules=[tmodtom, ],
     classifiers=[
         # "Development Status :: 5 - Production/Stable",
