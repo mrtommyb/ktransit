@@ -15,7 +15,7 @@ if sys.argv[-1] == "publish":
 interface_exists = os.path.exists("ktransit/tmodtom.pyf")
 if "interface" in sys.argv or not interface_exists:
     # Generate the Fortran signature/interface.
-    cmd = "cd k-transit;"
+    cmd = "cd ktransit;"
     cmd += "f2py tmodtom.f -m _tmodtom -h tmodtom.pyf"
     cmd += " --overwrite-signature"
     os.system(cmd)
