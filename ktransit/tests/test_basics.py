@@ -4,13 +4,12 @@ To run, simply type "py.test".
 
 
 def test_import():
-    """Can we import k2ephem successfully?"""
+    """Can we import ktransit successfully?"""
     import ktransit
 
 
 def test_planets():
     import ktransit
-    import matplotlib.pyplot as plt
 
     M = ktransit.LCModel()
     M.add_star()
