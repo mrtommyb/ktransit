@@ -2,14 +2,25 @@ language: python
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
+  - "3.4"
 
 before_install:
   - sudo apt-get install liblapack-dev gfortran python-scipy libblas-dev libsuitesparse-dev swig
-  
+  - sudo ln -Tsf /{run,dev}/shm
+  - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then wget http://repo.continuum.io/miniconda/Miniconda-3.6.0-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda3-3.6.0-Linux-x86_64.sh -O miniconda.sh; fi
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then export PATH=/home/travis/miniconda/bin:$PATH; else export PATH=/home/travis/miniconda3/bin:$PATH; fi
+
 install:
-  - pip install numpy
-  - pip install nose
-  - python setup.py install
+  - conda create -n testenv --yes pip python=$TRAVIS_PYTHON_VERSION
+  - source activate testenv
+  - conda install --yes ipython pyzmq numpy scipy nose matplotlib pandas Cython patsy statsmodels
+  - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then conda install --yes mock; fi
+  - pip install --no-deps numdifftools
+  - pip install git+https://github.com/Theano/Theano.git
+  - python setup.py build_ext --inplace
+  - pip install git+https://github.com/mahmoudimus/nose-timer.git
+
 script:  nosetests
