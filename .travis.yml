@@ -4,7 +4,7 @@ python:
 virtualenv:
   system_site_packages: true
 before_install:
-  - sudo apt-get install -qq python-numpy python-scipy gfortran
+  - sudo apt-get install -qq gfortran
 install:
   - python setup.py build install
 
