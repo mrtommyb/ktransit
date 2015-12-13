@@ -24,4 +24,4 @@ install:
   - source activate test-environment
   - python setup.py build install
 
-script:  py.test -v
+script:  nosetests -w ktransit/tests -v
