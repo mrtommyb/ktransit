@@ -32,9 +32,10 @@ def byebyebaddata(flux,ferr,quality):
     ferr[~mask] = np.nan
     return flux, ferr
 
-def i_hate_nans(time,flux,ferr):
+def i_hate_nans(time,flux,ferr, quarter, quarter):
     finite = np.isfinite(flux)
-    return time[finite],flux[finite],ferr[finite]
+    return (time[finite],flux[finite],
+            ferr[finite], quarter[finite], quality[finite])
 
 def main(kic):
     client = kplr.API()
@@ -56,11 +57,15 @@ def main(kic):
                 quarter = np.r_[quarter,f[0].header["QUARTER"] +
                     np.zeros(len(hdu_data["time"]))]
 
+
     flux, ferr = byebyebaddata(flux,ferr,quality)
+    time, flux, ferr, quarter, quality = i_hate_nans(time,
+                                                     flux, ferr,
+                                                     quarter, quality)
     flux, ferr = norm_by_quarter(flux, ferr,quarter)
     cflux = (flux / med_filt(time,flux,dt=1.0)) - 1.0
 
-    time,cflux,ferr = i_hate_nans(time,cflux,ferr)
+
 
     fitT = FitTransit()
     fitT.add_guess_star(rho=2.45)
