@@ -19,7 +19,7 @@ setup(
     name="ktransit",
     description='A simple exoplanet transit modeling tool in python.',
     url="https://github.com/mrtommyb/ktransit",
-    version="0.2.3",
+    version="0.2.4",
     author="Tom Barclay",
     author_email="tom@tombarclay.com",
     packages=["ktransit", ],

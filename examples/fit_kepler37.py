@@ -32,7 +32,7 @@ def byebyebaddata(flux,ferr,quality):
     ferr[~mask] = np.nan
     return flux, ferr
 
-def i_hate_nans(time,flux,ferr, quarter, quarter):
+def i_hate_nans(time,flux,ferr, quarter, quality):
     finite = np.isfinite(flux)
     return (time[finite],flux[finite],
             ferr[finite], quarter[finite], quality[finite])
