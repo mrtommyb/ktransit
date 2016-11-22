@@ -1,4 +1,4 @@
-from ktransit import FitTransit, LCModel
+from ktransit import FitTransit, LCModel, plot_results
 import kplr
 import numpy as np
 
