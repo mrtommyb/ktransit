@@ -42,10 +42,10 @@ class LCModel(object):
         self.zpt = zpt
 
     def update_star(self,**kwargs):
-        [setattr(self,k,v) for k,v in kwargs.iteritems()]
+        [setattr(self,k,v) for k,v in kwargs.items()]
 
     def update_planet(self,pnum,**kwargs):
-        for k,v in kwargs.iteritems():
+        for k,v in kwargs.items():
             valarr = getattr(self,k)
             valarr[pnum] = v
             setattr(self,k,valarr)
