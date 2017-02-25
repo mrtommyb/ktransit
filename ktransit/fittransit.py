@@ -1,8 +1,8 @@
-from __future__ import division, print_function
+from __future__ import division, print_function, absolute_import
 import ktransit
 from scipy import optimize
 import numpy as np
-from wiener2 import wiener2, wienerLG
+from .wiener2 import wiener2, wienerLG
 
 class FitTransit(object):
 
@@ -39,7 +39,7 @@ class FitTransit(object):
         goodlist = ['rho', 'ld1',
         'ld2', 'ld3', 'ld4', 'dil',
         'veloffset', 'zpt']
-        kwnew = dict([(k,v) for k,v in kwargs.iteritems() if k in goodlist])
+        kwnew = dict([(k,v) for k,v in kwargs.items() if k in goodlist])
         self.mod.update_star(**kwnew)
 
     def update_planet(self,pnum,**kwargs):
@@ -53,7 +53,7 @@ class FitTransit(object):
             'occ',
             'ell',
             'alb']
-        kwnew = dict([(k,v) for k,v in kwargs.iteritems() if k in goodlist])
+        kwnew = dict([(k,v) for k,v in kwargs.items() if k in goodlist])
         self.mod.update_planet(pnum=pnum,**kwnew)
 
     def add_guess_planet(self,
@@ -174,7 +174,7 @@ class FitTransit(object):
 
         nps = len(self.fitparstar)
         npp = len(self.fitparplanet)
-        for i in xrange(self.nplanets):
+        for i in range(self.nplanets):
             fitplanet_d = dict(
                 zip(self.fitparplanet,
                 fitpars[nps+i*npp:nps+(i+1)*npp
@@ -187,7 +187,7 @@ class FitTransit(object):
     def do_fit(self):
         fitvalstar = [self.starguess_d[k] for k in self.fitparstar]
         fitvalplanet = []
-        for i in xrange(self.nplanets):
+        for i in range(self.nplanets):
             pdic = self.planetguess_d['pnum' + str(i)]
             fitvalplanet = np.r_[fitvalplanet,
             [pdic[k] for k in self.fitparplanet]]
@@ -205,20 +205,20 @@ class FitTransit(object):
         stellarout = self.fitresult[0:nps]
         self.fitresultstellar = dict(zip(self.fitparstar,stellarout))
         self.fitresultplanets = {}
-        for i in xrange(self.nplanets):
+        for i in range(self.nplanets):
             planetout = self.fitresult[nps + i*npp:nps + (i+1)*npp]
             self.fitresultplanets['pnum' + str(i)] = dict(
                 zip(self.fitparplanet,planetout))
 
     def print_results(self):
         print("Best-fitting stellar parameters")
-        for k,v in self.fitresultstellar.iteritems():
+        for k,v in self.fitresultstellar.items():
             print(u'{0}: {1}'.format(k, v))
         print()
-        for i in xrange(self.nplanets):
+        for i in range(self.nplanets):
             print("Best-fitting planet parameters for planet {0}".format(i))
             pnum = 'pnum' + str(i)
-            for k,v in self.fitresultplanets[pnum].iteritems():
+            for k,v in self.fitresultplanets[pnum].items():
                 print(u'{0}: {1}'.format(k, v))
             print()
 
@@ -379,7 +379,7 @@ if __name__ == '__main__':
     #update model
 
     M.update_star(**fitT.fitresultstellar)
-    for i in xrange(fitT.nplanets):
+    for i in range(fitT.nplanets):
         use_d = fitT.fitresultplanets['pnum' + str(i)]
         M.update_planet(pnum=i,**use_d)
 
