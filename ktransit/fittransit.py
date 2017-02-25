@@ -1,8 +1,8 @@
-from __future__ import division, print_function
+from __future__ import division, print_function, absolute_import
 import ktransit
 from scipy import optimize
 import numpy as np
-from wiener2 import wiener2, wienerLG
+from .wiener2 import wiener2, wienerLG
 
 class FitTransit(object):
 
