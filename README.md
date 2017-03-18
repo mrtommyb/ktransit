@@ -6,14 +6,7 @@ ktransit
 [![Travis status](http://img.shields.io/travis/mrtommyb/ktransit/master.svg)](http://travis-ci.org/mrtommyb/ktransit)
 
 This python package contains routines to create and/or fit a transiting planet model.
-The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model. The code will calculate a full orbital model and eccentricity can be non-zero. The underlying orbital model is taken from the [Kepler](https://github.com/jasonfrowe/Kepler) repo of [Jason Rowe](https://github.com/jasonfrowe). His code is GPLv3. User of this software are requested to cite 
-* Rowe et al. 2014 ApJ, 784, 45  
-* Rowe et al. 2015 ApJs, 217, 16
-
---or--
-
-* Jason Rowe (2016). Kepler: Kepler Transit Model Codebase Release. [Data set]. 
- Zenodo. [http://doi.org/10.5281/zenodo.60297](http://doi.org/10.5281/zenodo.60297)
+The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model. The code will calculate a full orbital model and eccentricity can be non-zero. 
 
 With version 0.1, radial velocity data can now be calcaulted via the model and included in the fit
 
@@ -188,3 +181,13 @@ plt.plot(M.time,tmod)
 plt.plot(M.rvtime,rvmodel)
 ```
 
+Credit
+---
+The underlying orbital model is taken from the [Kepler](https://github.com/jasonfrowe/Kepler) repo of [Jason Rowe](https://github.com/jasonfrowe). His code is GPLv3. User of this software are requested to cite 
+* Rowe et al. 2014 ApJ, 784, 45  
+* Rowe et al. 2015 ApJs, 217, 16
+
+_or_
+
+* Jason Rowe (2016). Kepler: Kepler Transit Model Codebase Release. [Data set]. 
+ Zenodo. [http://doi.org/10.5281/zenodo.60297](http://doi.org/10.5281/zenodo.60297)
