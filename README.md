@@ -8,7 +8,7 @@ ktransit
 This python package contains routines to create and/or fit a transiting planet model.
 The underlying model is a Fortran implementation of the [Mandel & Agol (2002)] (http://iopscience.iop.org/1538-4357/580/2/L171/fulltext/16756.text.html) limb darkened transit model. The code will calculate a full orbital model and eccentricity can be non-zero. 
 
-With version 0.1, radial velocity data can now be calcaulted via the model and included in the fit
+Radial velocity amplitudes can be calculated in the model and included in the fit.
 
 Installation
 -------
