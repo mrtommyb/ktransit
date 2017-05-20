@@ -45,7 +45,7 @@ time,earthlc = ktransit.give_me_earth()
 plt.plot(time,earthlc)
 ```
 
-Now, the code allows the user to input there own parameters.
+Now, the code allows the user to input their own parameters.
 ```python
 import ktransit
 import matplotlib.pyplot as plt
