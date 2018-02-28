@@ -17,9 +17,9 @@ def med_filt(x, y, dt=4.):
 
 def norm_by_quarter(flux,ferr,quarter):
     for i in np.unique(quarter):
-        flux[quarter == i] /= np.median(
-            flux[quarter == i])
         ferr[quarter == i] /= np.median(
+            flux[quarter == i])
+        flux[quarter == i] /= np.median(
             flux[quarter == i])
     return flux, ferr
 
