@@ -88,7 +88,7 @@ class LCModel(object):
 
     def add_data(self, time=np.arange(0, 10, 0.0188),
                  itime=None,
-                 ntt=np.zeros(self.nplanets),
+                 ntt=None,
                  tobs=None,
                  omc=None,
                  datatype=None):
@@ -106,7 +106,10 @@ class LCModel(object):
         else:
             self.itime = itime
 
-        self.ntt = ntt
+        if ntt is None:
+            np.zeros(self.nplanets)
+        else:
+            self.ntt = ntt
 
         if tobs is None:
             self.tobs = np.empty([self.nplanets, nmax])
