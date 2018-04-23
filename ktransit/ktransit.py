@@ -107,7 +107,7 @@ class LCModel(object):
             self.itime = itime
 
         if ntt is None:
-            np.zeros(self.nplanets)
+            self.ntt = np.zeros(self.nplanets)
         else:
             self.ntt = ntt
 
