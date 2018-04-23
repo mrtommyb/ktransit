@@ -89,9 +89,9 @@ class LCModel(object):
     def add_data(self, time=np.arange(0, 10, 0.0188),
                  itime=None,
                  ntt=np.zeros(self.nplanets),
-                 tobs=np.empty([self.nplanets, nmax]),
-                 omc=np.empty([self.nplanets, nmax]),
-                 datatype=np.zeros(npt)):
+                 tobs=None,
+                 omc=None,
+                 datatype=None):
         """
         Add data after all the planets are added!!
         """
@@ -108,11 +108,20 @@ class LCModel(object):
 
         self.ntt = ntt
 
-        self.tobs = tobs
+        if tobs is None:
+            self.tobs = np.empty([self.nplanets, nmax])
+        else:
+            self.tobs = tobs
 
-        self.omc = omc
+        if omc is None:
+            self.omc = np.empty([self.nplanets, nmax])
+        else:
+            self.omc = omc
 
-        self.datatype = datatype
+        if datatype is None:
+            self.datatype = np.zeros(npt)
+        else:
+            self.datatype = datatype
 
     def add_rv(self, rvtime=None, rvitime=None):
         if rvtime is None:
