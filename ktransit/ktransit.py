@@ -75,27 +75,28 @@ class LCModel(object):
         self.alb[pnum] = alb
 
     def add_dimention_to_planet_params(self):
-        self.T0 = np.r_[self.T0,0.0]
-        self.period = np.r_[self.period,0.0]
-        self.impact = np.r_[self.impact,0.0]
-        self.rprs = np.r_[self.rprs,0.0]
-        self.ecosw = np.r_[self.ecosw,0.0]
-        self.esinw = np.r_[self.esinw,0.0]
-        self.rvamp = np.r_[self.rvamp,0.0]
-        self.occ = np.r_[self.occ,0.0]
-        self.ell = np.r_[self.ell,0.0]
-        self.alb = np.r_[self.alb,0.0]
+        self.T0 = np.r_[self.T0, 0.0]
+        self.period = np.r_[self.period, 0.0]
+        self.impact = np.r_[self.impact, 0.0]
+        self.rprs = np.r_[self.rprs, 0.0]
+        self.ecosw = np.r_[self.ecosw, 0.0]
+        self.esinw = np.r_[self.esinw, 0.0]
+        self.rvamp = np.r_[self.rvamp, 0.0]
+        self.occ = np.r_[self.occ, 0.0]
+        self.ell = np.r_[self.ell, 0.0]
+        self.alb = np.r_[self.alb, 0.0]
 
-    def add_data(self, time=None, itime=None,
-        ntt=None, tobs=None, omc=None,
-        datatype=None):
+    def add_data(self, time=np.arange(0, 10, 0.0188),
+                 itime=None,
+                 ntt=np.zeros(self.nplanets),
+                 tobs=np.empty([self.nplanets, nmax]),
+                 omc=np.empty([self.nplanets, nmax]),
+                 datatype=np.zeros(npt)):
         """
         Add data after all the planets are added!!
         """
-        if time is None:
-            self.time = np.arange(0,10,0.0188)
-        else:
-            self.time = time
+
+        self.time = time
         npt = len(self.time)
         nmax = 1500000
 
@@ -105,39 +106,26 @@ class LCModel(object):
         else:
             self.itime = itime
 
-        if ntt is None:
-            self.ntt = np.zeros(self.nplanets)
-        else:
-            self.ntt = ntt
+        self.ntt = ntt
 
-        if tobs is None:
-            self.tobs = np.empty([self.nplanets,nmax])
-        else:
-            self.tobs = tobs
+        self.tobs = tobs
 
-        if omc is None:
-            self.omc = np.empty([self.nplanets,nmax])
-        else:
-            self.omc = omc
+        self.omc = omc
 
-        if datatype is None:
-            self.datatype = np.zeros(npt)
-        else:
-            self.datatype = datatype
+        self.datatype = datatype
 
-    def add_rv(self,rvtime=None, rvitime=None):
+    def add_rv(self, rvtime=None, rvitime=None):
         if rvtime is None:
             self.rvtime = np.arange(
-                self.T0[0],4.*self.period[0],1.0)
+                self.T0[0], 4. * self.period[0], 1.0)
         else:
             self.rvtime = rvtime
 
         if rvitime is None:
-            default_cadence = 30. / 1440. #30 mins
+            default_cadence = 30. / 1440.  # 30 mins
             self.rvitime = np.zeros_like(self.rvtime) + default_cadence
         else:
             self.rvitime = rvitime
-
 
     @property
     def transitmodel(self):

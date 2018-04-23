@@ -17,3 +17,15 @@ def test_planets():
     M.add_data()
 
     tmod = M.transitmodel 
+
+def test_planets():
+    import ktransit
+
+    M = ktransit.LCModel()
+    M.add_star()
+    M.add_planet()
+    M.add_planet()
+    M.add_planet()
+    M.add_data()
+
+    tmod = M.transitmodel 
