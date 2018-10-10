@@ -1,0 +1,43 @@
+M.add_planet( T0=planet_T0,     # a transit mid-time  
+        period=planet_period, # an orbital period in days
+        rprs=planet_rprs[counter]  )   # planet stellar radius ratio  
+ 
+M.add_data( time=time,                                 # timestamps to evaluate the model on
+        itime=np.zeros_like(time)+exptime )      # integration time of each timestamp
+
+tmod = M.transitmodel
+plt.plot(time,tmod, color = 'orange', label = str(planet_rprs[counter]))
+
+
+#make some noisey data
+pmap_data = np.random.uniform(-0.005, 0.005, len(time))
+
+
+#add the transit to the data
+fake = tmod + pmap_data
+plt.scatter(time, fake)
+
+#and now: can I recover the rprs parameter?
+fitT = FitTransit()
+fitT.add_guess_star(rho=star_rho, zpt = star_zpt)    
+fitT.add_guess_planet(
+        period=planet_period,
+        T0=planet_T0, 
+        rprs=planet_rprs[counter])
+fitT.add_data(time=time, flux=fake)#, ferr=ferr)
+
+
+vary_star = []      # free stellar parameters 'rho','zpt'
+vary_planet = ([  'rprs'     # free planetary parameters#'T0', 'rprs'
+    ])                # free planet parameters are the same for every planet you model
+
+fitT.free_parameters(vary_star, vary_planet)
+fitT.do_fit()                   # run the fitting
+
+fitT.print_results()            # print some results
+
+#overplot fitted transit model
+plt.plot(time, fitT.transitmodel, label = str(fitT.fitresultplanets['pnum0']['rprs']) , color = 'blue')
+
+plt.legend()
+plt.show()
